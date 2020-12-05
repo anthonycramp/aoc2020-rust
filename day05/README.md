@@ -83,3 +83,26 @@ fn compute_seat_row_col_binary(boarding_pass: &str) -> (i32, i32) {
     (row, col)
 }
 ```
+
+## More simplification
+
+After reviewing a few other solutions:
+
+Instead of the `chars().map().collect()`, I can just use `replace()`.
+
+The seat id calculation `row * 8 + col` is just a binary right shift by three
+and addition. I can just treat the entire boarding pass code as one binary
+number to generate the seat id.
+
+Something like:
+
+```rust
+fn compute_seat_id_binary(boarding_pass: &str) -> (i32, i32) {
+    let binary = boarding_pass
+        .replace("F", "0")
+        .replace("B", "1")
+        .replace("L", "0")
+        .replace("R", "1");
+    i32::from_str_radix(binary.as_str(), 2).expect("Error decoding binary row")
+}
+```

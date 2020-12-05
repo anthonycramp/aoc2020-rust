@@ -11,7 +11,7 @@ fn main() {
 fn run_part1(input: &str) -> i32 {
     input
         .lines()
-        .map(|line| compute_seat_id(line, compute_seat_row_col_binary))
+        .map(|line| compute_seat_id_binary(line))
         .max()
         .expect("Unexpected")
 }
@@ -19,7 +19,7 @@ fn run_part1(input: &str) -> i32 {
 fn run_part2(input: &str) -> i32 {
     let mut seat_ids = input
         .lines()
-        .map(|line| compute_seat_id(line, compute_seat_row_col_binary))
+        .map(|line| compute_seat_id_binary(line))
         .collect::<Vec<_>>();
     seat_ids.sort();
     let mut iter = seat_ids.iter_mut();
@@ -37,6 +37,15 @@ fn run_part2(input: &str) -> i32 {
 fn compute_seat_id(boarding_pass: &str, compute_row_col_fn: fn(&str) -> (i32, i32)) -> i32 {
     let (row, col) = compute_row_col_fn(&boarding_pass);
     row * 8 + col
+}
+
+fn compute_seat_id_binary(boarding_pass: &str) -> i32 {
+    let binary = boarding_pass
+        .replace("F", "0")
+        .replace("B", "1")
+        .replace("L", "0")
+        .replace("R", "1");
+    i32::from_str_radix(binary.as_str(), 2).expect("Error decoding binary row")
 }
 
 fn compute_seat_row_col(boarding_pass: &str) -> (i32, i32) {
