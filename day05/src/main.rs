@@ -16,8 +16,22 @@ fn run_part1(input: &str) -> i32 {
         .expect("Unexpected")
 }
 
-fn run_part2(_input: &str) -> bool {
-    false
+fn run_part2(input: &str) -> i32 {
+    let mut seat_ids = input
+        .lines()
+        .map(|line| compute_seat_id(line))
+        .collect::<Vec<_>>();
+    seat_ids.sort();
+    let mut iter = seat_ids.iter_mut();
+    let mut first = iter.next().expect("unexpected");
+    let mut second = iter.next().expect("unexpected");
+
+    while *second - *first == 1 {
+        first = second;
+        second = iter.next().expect("unexpected");
+    }
+
+    *first + 1
 }
 
 fn compute_seat_id(boarding_pass: &str) -> i32 {
