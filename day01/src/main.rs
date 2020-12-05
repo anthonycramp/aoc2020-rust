@@ -13,27 +13,29 @@ fn parse_input_whitespace_to_i32(input: &str) -> Vec<i32> {
     fields.iter().map(|f| f.parse().unwrap()).collect()
 }
 
-fn find_pair_that_sums_to_2020(nums: &Vec<i32>) -> (i32, i32) {
+fn find_pair_that_sums_to_target(nums: &Vec<i32>, target: i32) -> (i32, i32) {
     for (i, &v1) in nums.iter().enumerate() {
-        for &v2 in nums.split_at(i + 1).1 {
-            if v1 + v2 == 2020 {
-                return (v1, v2);
-            }
+        let remainder = target - v1;
+        if nums.split_at(i + 1).1.contains(&remainder) {
+            return (v1, remainder);
         }
     }
 
     (0, 0)
 }
 
+fn find_pair_that_sums_to_2020(nums: &Vec<i32>) -> (i32, i32) {
+    find_pair_that_sums_to_target(nums, 2020)
+}
+
 fn find_triple_that_sums_to_2020(nums: &Vec<i32>) -> (i32, i32, i32) {
     for (i, &v1) in nums.iter().enumerate() {
-        for (j, &v2) in nums.split_at(i + 1).1.iter().enumerate() {
-            for &v3 in nums.split_at(j + 1).1 {
-                if v1 + v2 + v3 == 2020 {
-                    return (v1, v2, v3);
-                }
-            }
+        let remainder = 2020 - v1;
+        let pair = find_pair_that_sums_to_target(&Vec::from(nums.split_at(i + 1).1), remainder);
+        if pair.0 == 0 && pair.1 == 0 {
+            continue;
         }
+        return (v1, pair.0, pair.1);
     }
 
     (0, 0, 0)
