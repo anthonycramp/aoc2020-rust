@@ -8,16 +8,81 @@ fn main() {
     println!("Day 05 Part 2: {}", part2_output);
 }
 
-fn run_part1(_input: &str) -> bool {
-    false
+fn run_part1(input: &str) -> i32 {
+    input
+        .lines()
+        .map(|line| compute_seat_id(line))
+        .max()
+        .expect("Unexpected")
 }
 
 fn run_part2(_input: &str) -> bool {
     false
 }
 
+fn compute_seat_id(boarding_pass: &str) -> i32 {
+    let (row, col) = compute_seat_row_col(&boarding_pass);
+    row * 8 + col
+}
+
+fn compute_seat_row_col(boarding_pass: &str) -> (i32, i32) {
+    let row_code = &boarding_pass[0..7];
+    let col_code = &boarding_pass[7..];
+
+    let mut low = 0;
+    let mut high = 127;
+
+    for code in row_code.chars() {
+        match code {
+            'F' => high = low + (high - low) / 2,
+            'B' => low = low + (high - low) / 2,
+            _ => panic!("Unknown row code: {}", code),
+        }
+    }
+
+    let row = high;
+
+    let mut low = 0;
+    let mut high = 7;
+
+    for code in col_code.chars() {
+        match code {
+            'L' => high = low + (high - low) / 2,
+            'R' => low = low + (high - low) / 2,
+            _ => panic!("Unknown row code: {}", code),
+        }
+    }
+
+    let col = high;
+
+    (row, col)
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn test_parse_input() {}
+    fn test_compute_seat_row_col1() {
+        let boarding_pass = "BFFFBBFRRR";
+        let seat_row_col = compute_seat_row_col(&boarding_pass);
+        assert_eq!(seat_row_col.0, 70);
+        assert_eq!(seat_row_col.1, 7);
+    }
+
+    #[test]
+    fn test_compute_seat_row_col2() {
+        let boarding_pass = "FFFBBBFRRR";
+        let seat_row_col = compute_seat_row_col(&boarding_pass);
+        assert_eq!(seat_row_col.0, 14);
+        assert_eq!(seat_row_col.1, 7);
+    }
+
+    #[test]
+    fn test_compute_seat_row_col3() {
+        let boarding_pass = "BBFFBBFRLL";
+        let seat_row_col = compute_seat_row_col(&boarding_pass);
+        assert_eq!(seat_row_col.0, 102);
+        assert_eq!(seat_row_col.1, 4);
+    }
 }
