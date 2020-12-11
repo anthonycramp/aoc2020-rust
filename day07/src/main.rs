@@ -10,6 +10,7 @@ fn main() {
         "Day 07 Part 1: {}",
         get_how_many_can_contain(&luggage, SHINY_GOLD)
     );
+    println!("Day 07 Part 2: {}", luggage.count_bags(SHINY_GOLD));
 }
 
 fn get_how_many_can_contain(luggage: &Luggage, colour: &str) -> usize {
@@ -129,6 +130,18 @@ impl Luggage {
             luggage: HashMap::new(),
         }
     }
+
+    fn count_bags(&self, bag_colour: &str) -> usize {
+        if let Some(bags) = self.luggage.get(&Bag::from(bag_colour)) {
+            let mut sum = 0;
+            for bag in bags {
+                sum += bag.count + bag.count * self.count_bags(bag.bag.colour.as_str());
+            }
+            sum
+        } else {
+            0
+        }
+    }
 }
 
 impl From<&str> for Luggage {
@@ -216,5 +229,37 @@ mod tests {
             luggage.luggage.get(&Bag::from(SHINY_GOLD)).unwrap().len(),
             2
         );
+    }
+
+    #[test]
+    fn test2() {
+        let input = "light red bags contain 1 bright white bag, 2 muted yellow bags.
+        dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+        bright white bags contain 1 shiny gold bag.
+        muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+        shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+        dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+        vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+        faded blue bags contain no other bags.
+        dotted black bags contain no other bags.";
+
+        let luggage = Luggage::from(input);
+        let bag_count = luggage.count_bags(SHINY_GOLD);
+        assert_eq!(bag_count, 32);
+    }
+
+    #[test]
+    fn test3() {
+        let input = "shiny gold bags contain 2 dark red bags.
+        dark red bags contain 2 dark orange bags.
+        dark orange bags contain 2 dark yellow bags.
+        dark yellow bags contain 2 dark green bags.
+        dark green bags contain 2 dark blue bags.
+        dark blue bags contain 2 dark violet bags.
+        dark violet bags contain no other bags.";
+
+        let luggage = Luggage::from(input);
+        let bag_count = luggage.count_bags(SHINY_GOLD);
+        assert_eq!(bag_count, 126);
     }
 }
