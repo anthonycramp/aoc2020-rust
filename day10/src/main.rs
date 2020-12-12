@@ -26,16 +26,16 @@ fn find_jolt_diffs(joltages: &[i32], diff: i32) -> i32 {
 }
 
 fn find_one_jolt_diffs(joltages: &[i32]) -> i32 {
-    let mut jolt_copy = joltages.to_vec().clone();
-    jolt_copy.sort();
+    let mut jolt_copy = joltages.to_vec();
+    jolt_copy.sort_unstable();
     let one_jolt_from_outlet = if jolt_copy[0] == 1 { 1 } else { 0 };
 
     one_jolt_from_outlet + find_jolt_diffs(&jolt_copy, 1)
 }
 
 fn find_three_jolt_diffs(joltages: &[i32]) -> i32 {
-    let mut jolt_copy = joltages.to_vec().clone();
-    jolt_copy.sort();
+    let mut jolt_copy = joltages.to_vec();
+    jolt_copy.sort_unstable();
 
     // + 1 below is for the device's 3-jolt diff from hightest adapter
     find_jolt_diffs(&jolt_copy, 3) + 1
