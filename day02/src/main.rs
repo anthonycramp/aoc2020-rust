@@ -35,14 +35,14 @@ impl PasswordPolicy {
     }
 }
 
-fn count_valid_passwords(password_db: &Vec<(PasswordPolicy, String)>) -> usize {
+fn count_valid_passwords(password_db: &[(PasswordPolicy, String)]) -> usize {
     password_db
         .iter()
         .filter(|(policy, password)| policy.is_valid_password(&password))
         .count()
 }
 
-fn count_valid_passwords_part2(password_db: &Vec<(PasswordPolicy, String)>) -> usize {
+fn count_valid_passwords_part2(password_db: &[(PasswordPolicy, String)]) -> usize {
     password_db
         .iter()
         .filter(|(policy, password)| policy.is_valid_password_part2(&password))
@@ -51,7 +51,7 @@ fn count_valid_passwords_part2(password_db: &Vec<(PasswordPolicy, String)>) -> u
 
 fn parse_password_policy(policy_input: &str) -> PasswordPolicy {
     let first_split: Vec<&str> = policy_input.split_whitespace().collect();
-    let second_split: Vec<&str> = first_split[0].split("-").collect();
+    let second_split: Vec<&str> = first_split[0].split('-').collect();
 
     PasswordPolicy {
         lowest: second_split[0].parse().unwrap(),
@@ -61,7 +61,7 @@ fn parse_password_policy(policy_input: &str) -> PasswordPolicy {
 }
 
 fn parse_password_line(password_policy_line: &str) -> (PasswordPolicy, String) {
-    let first_split: Vec<&str> = password_policy_line.split(":").collect();
+    let first_split: Vec<&str> = password_policy_line.split(':').collect();
     let password_policy = parse_password_policy(&first_split[0]);
     let password = String::from(first_split[1]);
 
