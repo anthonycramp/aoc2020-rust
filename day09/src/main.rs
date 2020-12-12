@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 const INPUT: &str = include_str!("../../resources/day09_input.txt");
 
 fn main() {
@@ -37,9 +39,10 @@ fn find_xmas_weakness(numbers: &[i64], window_size: i64) -> i64 {
         let window_lower = index as usize;
         let window_upper = window_lower + window_size as usize;
 
-        match find_pair_that_sums_to_target(&numbers[window_lower..window_upper], target_number) {
-            None => return target_number,
-            _ => (),
+        if find_pair_that_sums_to_target(&numbers[window_lower..window_upper], target_number)
+            .is_none()
+        {
+            return target_number;
         }
         index += 1
     }
@@ -54,17 +57,19 @@ fn find_xmas_encryption_weakness(numbers: &[i64], target_num: i64) -> i64 {
             let contiguous_range = low_index as usize..high_index as usize;
             let contiguous_sum: i64 = numbers[contiguous_range.clone()].iter().sum();
 
-            if contiguous_sum == target_num {
-                return numbers[contiguous_range.clone()]
-                    .iter()
-                    .min()
-                    .expect("Couldn't find min!")
-                    + numbers[contiguous_range.clone()]
+            match contiguous_sum.cmp(&target_num) {
+                Ordering::Equal => {
+                    return numbers[contiguous_range.clone()]
                         .iter()
-                        .max()
-                        .expect("Couldn't find max!");
-            } else if contiguous_sum > target_num {
-                break;
+                        .min()
+                        .expect("Couldn't find min!")
+                        + numbers[contiguous_range]
+                            .iter()
+                            .max()
+                            .expect("Couldn't find max!")
+                }
+                Ordering::Greater => break,
+                _ => (),
             }
         }
 
