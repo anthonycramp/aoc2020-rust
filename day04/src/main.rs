@@ -9,20 +9,12 @@ fn main() {
 
 fn run_part1(input: &str) -> usize {
     let passports = parse_passports(&input);
-    let valid_passports = passports
-        .iter()
-        .filter(|p| p.is_valid())
-        .collect::<Vec<_>>();
-    valid_passports.len()
+    passports.iter().filter(|p| p.is_valid()).count()
 }
 
 fn run_part2(input: &str) -> usize {
     let passports = parse_passports(&input);
-    let valid_passports = passports
-        .iter()
-        .filter(|p| p.is_valid_part2())
-        .collect::<Vec<_>>();
-    valid_passports.len()
+    passports.iter().filter(|p| p.is_valid_part2()).count()
 }
 
 struct Passport {
@@ -73,9 +65,7 @@ impl Passport {
     fn is_byr_valid(&self) -> bool {
         match &self.byr {
             Some(byr) => {
-                let byr_num = byr.parse::<i32>();
-                if byr_num.is_ok() {
-                    let num = byr_num.unwrap();
+                if let Ok(num) = byr.parse::<i32>() {
                     num >= 1920 && num <= 2002
                 } else {
                     false
@@ -88,9 +78,7 @@ impl Passport {
     fn is_iyr_valid(&self) -> bool {
         match &self.iyr {
             Some(val) => {
-                let val_num = val.parse::<i32>();
-                if val_num.is_ok() {
-                    let num = val_num.unwrap();
+                if let Ok(num) = val.parse::<i32>() {
                     num >= 2010 && num <= 2020
                 } else {
                     false
@@ -103,9 +91,7 @@ impl Passport {
     fn is_eyr_valid(&self) -> bool {
         match &self.eyr {
             Some(val) => {
-                let val_num = val.parse::<i32>();
-                if val_num.is_ok() {
-                    let num = val_num.unwrap();
+                if let Ok(num) = val.parse::<i32>() {
                     num >= 2020 && num <= 2030
                 } else {
                     false
@@ -118,9 +104,7 @@ impl Passport {
     fn is_hgt_valid(&self) -> bool {
         if let Some(val) = &self.hgt {
             if val.ends_with("cm") || val.ends_with("in") {
-                let height = val[0..val.len() - 2].parse::<i32>();
-                if height.is_ok() {
-                    let height = height.unwrap();
+                if let Ok(height) = val[0..val.len() - 2].parse::<i32>() {
                     if val.ends_with("cm") {
                         height >= 150 && height <= 193
                     } else {
@@ -140,7 +124,7 @@ impl Passport {
     fn is_hcl_valid(&self) -> bool {
         if let Some(val) = &self.hcl {
             val.chars().count() == 7
-                && val.starts_with("#")
+                && val.starts_with('#')
                 && val[1..]
                     .chars()
                     .all(|c| (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'))
@@ -179,7 +163,7 @@ impl From<&str> for Passport {
         let fields = item.split_ascii_whitespace().collect::<Vec<_>>();
 
         for field in fields {
-            let key_val: Vec<&str> = field.split(":").collect();
+            let key_val: Vec<&str> = field.split(':').collect();
             let val = Some(String::from(key_val[1]));
             match key_val[0] {
                 "byr" => passport.byr = val,
@@ -207,7 +191,7 @@ fn parse_passports(input: &str) -> Vec<Passport> {
             passport_string = String::default();
         } else {
             passport_string.push_str(line);
-            passport_string.push_str("\n");
+            passport_string.push('\n');
         }
     }
 
