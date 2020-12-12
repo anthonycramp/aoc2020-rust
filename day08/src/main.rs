@@ -21,7 +21,7 @@ enum Instruction {
 
 impl From<&str> for Instruction {
     fn from(item: &str) -> Self {
-        let fields: Vec<&str> = item.split(" ").collect();
+        let fields: Vec<&str> = item.split(' ').collect();
         let operand = fields[1].parse().expect("Couldn't parse i32");
         match fields[0] {
             "nop" => Instruction::NOP(operand),
