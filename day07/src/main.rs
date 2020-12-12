@@ -19,8 +19,6 @@ fn get_how_many_can_contain(luggage: &Luggage, colour: &str) -> usize {
     // from bag (colour) to bags that it can be contained by.
     let mut reverse: HashMap<String, Vec<String>> = HashMap::new();
 
-    let my_bag = Bag::from(colour);
-
     for (outer_bag, inner_bags) in &luggage.luggage {
         for inner_bag in inner_bags {
             if let Some(inner) = reverse.get_mut(&inner_bag.bag.colour) {
@@ -79,7 +77,7 @@ impl From<&str> for Bag {
             || item.ends_with(" bags")
         {
             Bag {
-                colour: String::from(item.rsplitn(2, " ").collect::<Vec<_>>()[1]),
+                colour: String::from(item.rsplitn(2, ' ').collect::<Vec<_>>()[1]),
             }
         } else {
             Bag {
@@ -109,7 +107,7 @@ impl From<&str> for BagCount {
         if item == "no other bags." {
             BagCount::default()
         } else {
-            let fields = item.splitn(2, " ").collect::<Vec<_>>();
+            let fields = item.splitn(2, ' ').collect::<Vec<_>>();
 
             BagCount {
                 bag: Bag::from(fields[1]),
