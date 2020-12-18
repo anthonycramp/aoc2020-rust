@@ -1,9 +1,11 @@
 fn main() {
     let input = aoc2020::get_input_string_from_file().unwrap();
     let password_db = parse_password_db(&input);
-    let valid_password_count = count_valid_passwords(&password_db);
+    let valid_password_count =
+        count_valid_passwords(&password_db, PasswordPolicy::is_valid_password);
     println!("Day 02 Part 1: {}", valid_password_count);
-    let valid_password_count = count_valid_passwords_part2(&password_db);
+    let valid_password_count =
+        count_valid_passwords(&password_db, PasswordPolicy::is_valid_password_part2);
     println!("Day 02 Part 2: {}", valid_password_count);
 }
 
@@ -35,17 +37,13 @@ impl PasswordPolicy {
     }
 }
 
-fn count_valid_passwords(password_db: &[(PasswordPolicy, String)]) -> usize {
+fn count_valid_passwords(
+    password_db: &[(PasswordPolicy, String)],
+    password_valid_fn: fn(&PasswordPolicy, &str) -> bool,
+) -> usize {
     password_db
         .iter()
-        .filter(|(policy, password)| policy.is_valid_password(&password))
-        .count()
-}
-
-fn count_valid_passwords_part2(password_db: &[(PasswordPolicy, String)]) -> usize {
-    password_db
-        .iter()
-        .filter(|(policy, password)| policy.is_valid_password_part2(&password))
+        .filter(|(policy, password)| password_valid_fn(policy, password.as_str()))
         .count()
 }
 
@@ -145,7 +143,8 @@ mod test {
         1-3 b: cdefg
         2-9 c: ccccccccc";
         let password_db = parse_password_db(&password_db_input);
-        let valid_password_count = count_valid_passwords(&password_db);
+        let valid_password_count =
+            count_valid_passwords(&password_db, PasswordPolicy::is_valid_password);
         assert_eq!(valid_password_count, 2);
     }
 }
